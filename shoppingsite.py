@@ -7,7 +7,7 @@ Authors: Joel Burton, Christian Fernandez, Meggie Mahnken.
 """
 
 
-from flask import Flask, render_template, redirect, flash, session
+from flask import Flask, render_template, redirect, flash, session, request
 import jinja2
 
 import melons
@@ -57,7 +57,7 @@ def show_melon(melon_id):
 
 
 @app.route("/cart")
-def shopping_cart(melon_id):
+def shopping_cart():
     """Display content of shopping cart."""
 
     # TODO: Display the contents of the shopping cart.
@@ -70,10 +70,19 @@ def shopping_cart(melon_id):
     #   - keep track of the total amt ordered for a melon-type
     #   - keep track of the total amt of the entire order
     # - hand to the template the total order cost and the list of melon types
+    # import pdb; pdb.set_trace()
+    cart_dict = {}
 
-    melon = melons.get_by_id(melon_id)
+    for id in session["cart"]:
+        melon = melons.get_by_id(id)
 
-    return render_template("cart.html", Melon=Melon)
+        if id not in cart_dict:
+            cart_dict[melon] = 1
+        else:
+            cart_dict[melon] += 1
+
+    print cart_dict
+    return render_template("cart.html", cart_dict=cart_dict)
 
 
 @app.route("/add_to_cart/<int:id>")
@@ -89,11 +98,10 @@ def add_to_cart(id):
     # The logic here should be something like:
     #
     # - add the id of the melon they bought to the cart in the session
-    for id in session:
-        if id not in session:
-            session[id] = 1
-        else:
-            session[id] = session[id] + 1 
+    if "cart" in session:
+        session["cart"].append(id)
+    else:
+        session["cart"] = [id]
 
     return "Congrats! You gots yourself a melon to buy."
 
