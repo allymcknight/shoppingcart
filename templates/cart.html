@@ -13,18 +13,19 @@
         </tr>
         </thead>
         <tbody>
+        {% for key in cart_dict %}    
         <tr>
-        {% for key in cart_dict %}
-        <td>{{ key }}</td>
-        <td>{{ key }}</td>
-        <td>{{ key }}</td>
-        <td>{{ key}} </td>
+            <td>{{ cart_dict[key][1] }}</td>
+            <td>{{ cart_dict[key][0] }}</td>
+        <td>${{ cart_dict[key][2]  }}0</td>
+        <td>${{ cart_dict[key][0]*cart_dict[key][2]}}0 </td>
+                </tr>
         {% endfor %}
-        </tr>
+
         </tbody>
     </table>
 
-    <h3>Total: $27.00</h3>
+    <h3>Total: ${{ total }}0</h3>
 
     <a href="/checkout" class="btn btn-large btn-primary">Check Out</a>
 

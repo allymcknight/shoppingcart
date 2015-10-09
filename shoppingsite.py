@@ -72,17 +72,25 @@ def shopping_cart():
     # - hand to the template the total order cost and the list of melon types
     # import pdb; pdb.set_trace()
     cart_dict = {}
-
+    total = 0
     for id in session["cart"]:
         melon = melons.get_by_id(id)
 
         if id not in cart_dict:
-            cart_dict[melon] = 1
+            cart_dict[id] = [1]
+            cart_dict[id].append(melon.common_name)
+            cart_dict[id].append(melon.price)
         else:
-            cart_dict[melon] += 1
+            cart_dict[id][0] += 1
+
+    for id in cart_dict:
+        total = total + (cart_dict[id][0]*cart_dict[id][2])
+
+
+
 
     print cart_dict
-    return render_template("cart.html", cart_dict=cart_dict)
+    return render_template("cart.html", cart_dict=cart_dict, total=total)
 
 
 @app.route("/add_to_cart/<int:id>")
@@ -103,8 +111,8 @@ def add_to_cart(id):
     else:
         session["cart"] = [id]
 
-    return "Congrats! You gots yourself a melon to buy."
-
+    flash("Congrats! You gots yourself a melon to buy.")
+    return redirect("/cart")
 
 @app.route("/login", methods=["GET"])
 def show_login():
